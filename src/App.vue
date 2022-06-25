@@ -1,26 +1,62 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <start-page
+    v-if="currentPage === 'start-page'"
+    @onStartGame="onStartGamePokemon($event)"
+  />
+  <main-content-page
+    v-if="currentPage === 'main-content-page'"
+    :pokemonList="pokemonList"
+    @redirectToFinalPage="redirectToFinalPage($event)"
+  />
+  <final-page
+    v-if="currentPage === 'final-page'"
+    @onRedirectHomePage="redirectToFinalPage($event)"
+    :timer="timer"
+  />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import StartPage from "./components/StartPages.vue";
+import MainContentPage from "./components/MainContentPage.vue";
+import FinalPage from "./components/FinalPage.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
-</script>
+    StartPage,
+    MainContentPage,
+    FinalPage,
+  },
+  data() {
+    return {
+      currentPage: "start-page",
+      pokemonList: [],
+      timer: null,
+    };
+  },
+  methods: {
+    onStartGamePokemon(pokemon) {
+      const pokemonList = Array.from(
+        { length: Number(pokemon.countPokemon) / 2 },
+        (v, i) => i + 1
+      );
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+      const resultQuantityPokemon = [...pokemonList]
+        .concat(pokemonList)
+        .sort(() => Math.random() - 0.5);
+
+      this.pokemonList = resultQuantityPokemon;
+
+      this.timer = new Date().getTime();
+
+      console.log(this.timer);
+
+      this.currentPage = "main-content-page";
+    },
+
+    redirectToFinalPage(page) {
+      this.currentPage = page;
+    },
+  },
+};
+</script>
